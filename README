@@ -1,1 +1,69 @@
 demo code for tutoring lessons
+
+lesson 1: screen saver (screen_saver.py)
+
+Teaching Plan: Building a Bouncing Text Screensaver
+Step 1: Setup & Initialization (5-10 minutes)
+Start with the absolute basics:
+
+Import pygame
+Initialize pygame with pygame.init()
+Create a window with pygame.display.set_mode()
+Set the window title
+Goal: Student sees a blank window and understands the "setup" phase
+
+Step 2: Draw Static Text (10 minutes)
+Build on Step 1:
+
+Create a font object
+Render text as an image
+Position it in the center using get_rect()
+Draw it to the screen with screen.blit()
+Goal: Static "Hello!" text appears centered on screen
+
+Step 3: Create a Game Loop (10 minutes)
+Introduce the main loop concept:
+
+Explain why games need a loop (constantly updating)
+Add event handling (quit button)
+Add FPS limiting with clock.tick()
+Redraw every frame
+Goal: Text stays visible, window is responsive (can close it)
+
+Step 4: Move the Text (15 minutes)
+Introduce velocity and animation:
+
+Create x_velocity and y_velocity variables
+Explain pixels-per-second concept
+Calculate dt (delta time) to make movement frame-rate independent
+Update position: text_rect.x += x_velocity * dt
+Goal: Text moves across screen smoothly
+
+Step 5: Add Bouncing (15 minutes)
+Introduce collision detection:
+
+Check if text hits left/right walls: text_rect.left < 0 or text_rect.right > SCREEN_WIDTH
+Reverse velocity when hit: x_velocity *= -1
+Repeat for top/bottom walls
+Goal: Text bounces off all 4 edges
+
+Step 6: Add Color Changes (10 minutes)
+Add visual interest:
+
+Import random
+Generate random RGB colors when text bounces
+Re-render text with new color each frame
+Goal: Text changes color every time it hits a wall
+
+Final Project: Have students modify it:
+Change the message
+Adjust velocities (faster/slower)
+Change starting color
+Add multiple bouncing objects
+Change window size
+Key Concepts to Emphasize:
+The Game Loop: Everything happens in the loop (60 times per second)
+Delta Time (dt): Why we multiply velocity by dt for smooth motion
+Rectangles: How get_rect() helps with positioning and collision
+Frame Rate Independence: Same speed on fast and slow computers
+This progression goes from "watching paint dry" → "static text" → "interactive program" → "animation" → "game logic" — keeping students engaged at each step!

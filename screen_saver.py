@@ -1,3 +1,15 @@
+# screensaver lesson
+# steps
+# 1. create a window and title
+# 2. create game loop with tick(), 60 fps
+# 3. draw static text
+# 4. animate the text horizontally
+# 5. bounce text off side walls
+# 6. animate text vertically, bounce off top and bottom
+# 7. animate text diagonally
+# 8. add other bouncing effects: color, speed, text change
+# 9. you're done!
+
 # load pygame library
 import pygame
 # load random library
@@ -48,7 +60,7 @@ while running:
     # pace the loop (limit FPS)
     # if computer is too fast, it pauses to maintain FPS
     # target is 1/60, but actual value is variable
-    dt = clock.tick(FPS_MAX) / 1000 # seconds
+    delta_time = clock.tick(FPS_MAX) / 1000 # seconds
 
     # for animation
     # speed = pixels per second (not pixels per frame)
@@ -58,8 +70,8 @@ while running:
     # x += speed * secs_since_last_frame
 
     # move text
-    text_rect.x += x_velocity * dt
-    text_rect.y += y_velocity * dt
+    text_rect.x += x_velocity * delta_time
+    text_rect.y += y_velocity * delta_time
 
     # bounce off left and right walls
     if text_rect.left < 0 or text_rect.right > SCREEN_WIDTH:
