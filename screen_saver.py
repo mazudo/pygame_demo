@@ -8,12 +8,15 @@
 # 6. animate text vertically, bounce off top and bottom
 # 7. animate text diagonally
 # 8. add other bouncing effects: color, speed, text change
-# 9. you're done!
+# 9. add sounds!
+# 10. you're done!
 
 # load pygame library
 import pygame
 # load random library
 import random
+# to load files
+from pathlib import Path
 
 # constants
 SCREEN_WIDTH = 400
@@ -27,12 +30,41 @@ y_velocity = 90
 
 # starts pygame internal systems
 pygame.init()
+# init sound system
+# 44100hz frequency (CD quality)
+# -16 signed 16-bit audio (modern sound files)
+# 2 channel (stereo)
+# 512 buffer size (sweet spot for game sounds)
+# 
+pygame.mixer.init(44100, -16, 2, 512)
+
+# load sound files
+# source: https://kenney.nl/assets/category:Audio
+# http://pixabay.com/sound-effects/
+# https://pixabay.com/music/
+
+# file path and files
+# get absolute file path to this python file
+current_dir = Path(__file__).resolve().parent
+# now add the filenames to it
+meteor_filepath = current_dir.joinpath("abstract_meteor.mp3") # music
+stranger_things_filepath = current_dir.joinpath("stranger-things.mp3") # music 2
+bounce_filepath = current_dir.joinpath("drop_001.ogg") # sound effect
+# music
+pygame.mixer.music.load(stranger_things_filepath)
+pygame.mixer.music.set_volume(0.4)
+# sound effect
+bounce = pygame.mixer.Sound(bounce_filepath)
+bounce.set_volume(0.7)
+
+# play background music in a loop
+pygame.mixer.music.play(-1)
 
 # opens a window
 # screen is where you draw
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # set window title
-pygame.display.set_caption("Hello Pygame")
+pygame.display.set_caption("Hello Screensaver")
 
 # create FPS limiter stopwatch
 clock = pygame.time.Clock()
@@ -82,6 +114,8 @@ while running:
             random.randint(50, 255),
             random.randint(50, 255),
         )
+        # bounce sound
+        bounce.play()
     
     # bounce off top and bottom walls
     if text_rect.top < 0 or text_rect.bottom > SCREEN_HEIGHT:
@@ -92,13 +126,16 @@ while running:
             random.randint(50, 255),
             random.randint(50, 255),
         )
+        # bounce sound
+        bounce.play()
 
+    # redraw text to new color, etc.
     text = font.render(TEXT_MESSAGE, True, color)
 
     # update state
     # fill screen with dark gray
     screen.fill((30, 30, 30))
-    # draw text at this centered rect position
+    # draw text at this current rect position
     screen.blit(text, text_rect)
 
     # draw
