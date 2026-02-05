@@ -17,6 +17,7 @@ import pygame
 import random
 # to load files
 from pathlib import Path
+import os
 
 # constants
 SCREEN_WIDTH = 400
@@ -27,6 +28,20 @@ FPS_MAX = 60 # games are typically 60 frames per second
 # bouncing text velocity (pixels per second)
 x_velocity = 110
 y_velocity = 90
+
+img_x_velocity = -100
+img_y_velocity = -80
+
+def load_png(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Missing image: {path}")
+    return pygame.image.load(path).convert_alpha()
+
+def scale_to_fit(img, max_w, max_h):
+    w, h = img.get_size()
+    scale = min(max_w / w, max_h / h)
+    new_size = (int(w * scale), int(h * scale))
+    return pygame.transform.smoothscale(img, new_size)
 
 # starts pygame internal systems
 pygame.init()
@@ -58,7 +73,7 @@ bounce = pygame.mixer.Sound(bounce_filepath)
 bounce.set_volume(0.7)
 
 # play background music in a loop
-# pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)
 
 # opens a window
 # screen is where you draw
@@ -79,6 +94,11 @@ text = font.render(TEXT_MESSAGE, True, color)
 # tells pygame where to draw it
 text_rect = text.get_rect()
 text_rect.center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+
+# load image
+pet_filepath = current_dir.joinpath("pet_happy.png")
+pet_img = scale_to_fit(load_png(pet_filepath), 250, 200)
+pet_img_rect = pet_img.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
 
 # game loop
@@ -109,9 +129,24 @@ while running:
     text_rect.x += x_velocity * delta_time
     text_rect.y += y_velocity * delta_time
 
+    pet_img_rect.x += img_x_velocity * delta_time
+    pet_img_rect.y += img_y_velocity * delta_time
+
     # bounce off left and right walls
     if text_rect.left < 0 or text_rect.right > SCREEN_WIDTH:
-        x_velocity *= -1
+        x_velocity *= -1 # text
+        # set random color 
+        color = (
+            random.randint(50, 255),
+            random.randint(50, 255),
+            random.randint(50, 255),
+        )
+        # bounce sound
+        bounce.play()
+    
+    # bounce off top and bottom walls
+    if text_rect.top < 0 or text_rect.bottom > SCREEN_HEIGHT:
+        y_velocity *= -1 # text
         # set random color
         color = (
             random.randint(50, 255),
@@ -119,17 +154,17 @@ while running:
             random.randint(50, 255),
         )
         # bounce sound
+        bounce.play()
+
+    # img bounce off left and right walls
+    if pet_img_rect.left < 0 or pet_img_rect.right > SCREEN_WIDTH:
+        img_x_velocity *= -1 # text
+        # bounce sound
         # bounce.play()
     
-    # bounce off top and bottom walls
-    if text_rect.top < 0 or text_rect.bottom > SCREEN_HEIGHT:
-        y_velocity *= -1
-        # set random color
-        color = (
-            random.randint(50, 255),
-            random.randint(50, 255),
-            random.randint(50, 255),
-        )
+    # img bounce off top and bottom walls
+    if pet_img_rect.top < 0 or pet_img_rect.bottom > SCREEN_HEIGHT:
+        img_y_velocity *= -1 # text
         # bounce sound
         # bounce.play()
 
@@ -141,6 +176,9 @@ while running:
     screen.fill((30, 30, 30))
     # draw text at this current rect position
     screen.blit(text, text_rect)
+    # draw image
+    screen.blit(pet_img, pet_img_rect)
+    
 
     # draw
     # update display
