@@ -16,8 +16,9 @@ import pygame
 # load random library
 import random
 # to load files
-from pathlib import Path
-import os
+#from pathlib import Path
+from os import path
+#import os
 
 # constants
 SCREEN_WIDTH = 400
@@ -32,15 +33,13 @@ y_velocity = 90
 img_x_velocity = -100
 img_y_velocity = -80
 
-def load_png(path):
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Missing image: {path}")
-    return pygame.image.load(path).convert_alpha()
-
 def scale_to_fit(img, max_w, max_h):
+    """
+    resize image to fit max width and height
+    """
     w, h = img.get_size()
     scale = min(max_w / w, max_h / h)
-    new_size = (int(w * scale), int(h * scale))
+    new_size = (int(w * scale), int(h * scale)) # resize but keep width/height ratio
     return pygame.transform.smoothscale(img, new_size)
 
 # starts pygame internal systems
@@ -60,11 +59,11 @@ pygame.mixer.init(44100, -16, 2, 512)
 
 # file path and files
 # get absolute file path to this python file
-current_dir = Path(__file__).resolve().parent
+current_dir = path.dirname(__file__)
 # now add the filenames to it
-meteor_filepath = current_dir.joinpath("abstract_meteor.mp3") # music
-stranger_things_filepath = current_dir.joinpath("stranger-things.mp3") # music 2
-bounce_filepath = current_dir.joinpath("drop_001.ogg") # sound effect
+meteor_filepath = current_dir + "\\abstract_meteor.mp3" # music
+stranger_things_filepath = current_dir + "\\stranger-things.mp3" # music 2
+bounce_filepath = current_dir + "\\drop_001.ogg" # sound effect
 # music
 pygame.mixer.music.load(stranger_things_filepath)
 pygame.mixer.music.set_volume(0.4)
@@ -96,9 +95,10 @@ text_rect = text.get_rect()
 text_rect.center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 
 # load image
-pet_filepath = current_dir.joinpath("pet_happy.png")
-pet_img = scale_to_fit(load_png(pet_filepath), 250, 200)
-pet_img_rect = pet_img.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+pet_filepath = current_dir + "\\pet_happy.png"
+pet_img = pygame.image.load(pet_filepath).convert_alpha()
+pet_img_scaled = scale_to_fit(pet_img, 150, 100)
+pet_img_rect = pet_img_scaled.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
 
 # game loop
@@ -177,7 +177,7 @@ while running:
     # draw text at this current rect position
     screen.blit(text, text_rect)
     # draw image
-    screen.blit(pet_img, pet_img_rect)
+    screen.blit(pet_img_scaled, pet_img_rect)
     
 
     # draw
