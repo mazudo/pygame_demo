@@ -64,12 +64,15 @@ current_dir = path.dirname(__file__)
 meteor_filepath = current_dir + "\\abstract_meteor.mp3" # music
 stranger_things_filepath = current_dir + "\\stranger-things.mp3" # music 2
 bounce_filepath = current_dir + "\\drop_001.ogg" # sound effect
+bark_filepath = current_dir + "\\dog_bark.mp3"
 # music
 pygame.mixer.music.load(stranger_things_filepath)
 pygame.mixer.music.set_volume(0.4)
 # sound effect
 bounce = pygame.mixer.Sound(bounce_filepath)
 bounce.set_volume(0.7)
+bark = pygame.mixer.Sound(bark_filepath)
+bark.set_volume(0.7)
 
 # play background music in a loop
 pygame.mixer.music.play(-1)
@@ -96,9 +99,15 @@ text_rect.center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 
 # load image
 pet_filepath = current_dir + "\\pet_happy.png"
-pet_img = pygame.image.load(pet_filepath).convert_alpha()
-pet_img_scaled = scale_to_fit(pet_img, 150, 100)
-pet_img_rect = pet_img_scaled.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+pet_img = pygame.image.load(pet_filepath).convert_alpha() # convert_alpha() used for images with transparent background
+# resize image to fit max width and height
+width, height = pet_img.get_size()
+scale = 0.16 # min(150/width, 100/height)
+new_size = (int(width * scale), int(height * scale)) # resize but keep width/height ratio
+pet_img_scaled = pygame.transform.smoothscale(pet_img, new_size)
+
+pet_img_rect = pet_img_scaled.get_rect()
+pet_img_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
 
 
 # game loop
@@ -159,14 +168,14 @@ while running:
     # img bounce off left and right walls
     if pet_img_rect.left < 0 or pet_img_rect.right > SCREEN_WIDTH:
         img_x_velocity *= -1 # text
-        # bounce sound
-        # bounce.play()
+        # bark sound
+        bark.play()
     
     # img bounce off top and bottom walls
     if pet_img_rect.top < 0 or pet_img_rect.bottom > SCREEN_HEIGHT:
         img_y_velocity *= -1 # text
-        # bounce sound
-        # bounce.play()
+        # bark sound
+        bark.play()
 
     # redraw text to new color, etc.
     text = font.render(TEXT_MESSAGE, True, color)

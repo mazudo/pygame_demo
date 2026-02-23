@@ -16,7 +16,7 @@ import pygame
 # load random library
 import random
 # to load files
-from pathlib import Path
+from os import path
 
 # constants
 SCREEN_WIDTH = 400
@@ -45,11 +45,11 @@ pygame.mixer.init(44100, -16, 2, 512)
 
 # file path and files
 # get absolute file path to this python file
-current_dir = Path(__file__).resolve().parent
+current_dir = path.dirname(__file__)
 # now add the filenames to it
-meteor_filepath = current_dir.joinpath("abstract_meteor.mp3") # music
-stranger_things_filepath = current_dir.joinpath("stranger-things.mp3") # music 2
-bounce_filepath = current_dir.joinpath("drop_001.ogg") # sound effect
+meteor_filepath = current_dir + "\\abstract_meteor.mp3" # music
+stranger_things_filepath = current_dir + "\\stranger-things.mp3" # music 2
+bounce_filepath = current_dir + "\\drop_001.ogg" # sound effect
 # music
 pygame.mixer.music.load(stranger_things_filepath)
 pygame.mixer.music.set_volume(0.4)
@@ -58,7 +58,7 @@ bounce = pygame.mixer.Sound(bounce_filepath)
 bounce.set_volume(0.7)
 
 # play background music in a loop
-# pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)
 
 # opens a window
 # screen is where you draw
@@ -119,7 +119,7 @@ while running:
             random.randint(50, 255),
         )
         # bounce sound
-        # bounce.play()
+        bounce.play()
     
     # bounce off top and bottom walls
     if text_rect.top < 0 or text_rect.bottom > SCREEN_HEIGHT:
@@ -131,7 +131,7 @@ while running:
             random.randint(50, 255),
         )
         # bounce sound
-        # bounce.play()
+        bounce.play()
 
     # redraw text to new color, etc.
     text = font.render(TEXT_MESSAGE, True, color)
