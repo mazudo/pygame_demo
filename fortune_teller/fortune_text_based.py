@@ -31,16 +31,16 @@ ODD_NUMBERS = [1, 2, 5, 6]
 # After an even number of moves, these numbers are visible.
 EVEN_NUMBERS = [3, 4, 7, 8]
 
-FORTUNES = {
-    1: "You will have a great day.",
-    2: "A new opportunity is coming soon.",
-    3: "You will learn something exciting this week.",
-    4: "Good luck is headed your way.",
-    5: "You will make someone smile today.",
-    6: "A fun surprise is in your future.",
-    7: "You will succeed if you keep trying.",
-    8: "Something positive will happen soon."
-}
+FORTUNES = [
+    "You will have a great day.",
+    "A new opportunity is coming soon.",
+    "You will learn something exciting this week.",
+    "Good luck is headed your way.",
+    "You will make someone smile today.",
+    "A fun surprise is in your future.",
+    "You will succeed if you keep trying.",
+    "Something positive will happen soon."
+]
 
 
 # -----------------------------
@@ -129,7 +129,7 @@ def get_number_choice(visible_numbers):
 # Input: final_number - an integer from 1 to 8
 # Output: Returns the matching fortune as a string
 def get_fortune(final_number):
-    return FORTUNES[final_number]
+    return FORTUNES[final_number - 1] # subtract one since list starts from zero index
 
 
 # Purpose: Displays the final fortune to the user.
@@ -139,11 +139,17 @@ def display_fortune(fortune_text):
     print()
     print("Your fortune is:")
     print(fortune_text)
+    print("##############################################")
+    print()
 
 
 # -----------------------------
 # MAIN CODE
 # -----------------------------
+# implement the following functions
+# some are basic
+# some accept parameters
+# some accept parameters and return values
 
 display_intro()
 
@@ -153,10 +159,12 @@ chosen_color = get_color_choice()
 
 # Move based on number of letters in the chosen color
 first_move_count = count_color_letters(chosen_color)
+# numbers that fortune teller shows to the player
 first_visible_numbers = get_visible_numbers(first_move_count)
 
 # Second choice: first number
 display_numbers(first_visible_numbers)
+# user's first number choice from prompt
 first_number_choice = get_number_choice(first_visible_numbers)
 
 # Move again based on the chosen number
