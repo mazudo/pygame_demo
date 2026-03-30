@@ -26,10 +26,10 @@ Program flow:
 COLORS = ["red", "blue", "green", "yellow"]
 
 # After an odd number of moves, these numbers are visible.
-ODD_NUMBERS = [1, 2, 5, 6]
+NUM_SET1 = [1, 2, 5, 6]
 
 # After an even number of moves, these numbers are visible.
-EVEN_NUMBERS = [3, 4, 7, 8]
+NUM_SET2 = [3, 4, 7, 8]
 
 FORTUNES = [
     "You will have a great day.",
@@ -41,7 +41,6 @@ FORTUNES = [
     "You will succeed if you keep trying.",
     "Something positive will happen soon."
 ]
-
 
 # -----------------------------
 # FUNCTIONS
@@ -93,12 +92,18 @@ def count_color_letters(color_choice):
 # Purpose: Determines which numbers should be shown after a move count.
 # Input: move_count - an integer representing how many times the teller moved
 # Output: Returns a list of visible numbers
-def get_visible_numbers(move_count):
-    # Odd counts show one set of numbers.
+def get_visible_numbers(move_count, current_numset):
+
+    # Odd counts return different set of numbers.
     if move_count % 2 == 1:
-        return ODD_NUMBERS
-    else:
-        return EVEN_NUMBERS
+        # flip
+        if current_numset == NUM_SET1:
+            return NUM_SET2
+        else:
+            return NUM_SET1
+    # if even, don't change
+    return current_numset
+
 
 
 # Purpose: Displays the currently visible numbers.
@@ -154,26 +159,45 @@ def display_fortune(fortune_text):
 display_intro()
 
 # First choice: color
+
+# display_colors(): prints the four colors to choose from out to the console
 display_colors()
+
+# get_color_choice(): Asks the user which color they want to 
+# choose and returns the selected choice as a string
+# for an extra challenge, handle invalid input too
 chosen_color = get_color_choice()
 
+
 # Move based on number of letters in the chosen color
+# count_color_letters(): returns the number of characters in the color
 first_move_count = count_color_letters(chosen_color)
+
+# starting numset is NUM_SET1
+current_numset = NUM_SET1
+
 # numbers that fortune teller shows to the player
-first_visible_numbers = get_visible_numbers(first_move_count)
+# get_visible_numbers(): returns list of current visible numbers based on move count
+current_numset = get_visible_numbers(first_move_count, current_numset)
 
 # Second choice: first number
-display_numbers(first_visible_numbers)
+# display number choices
+display_numbers(current_numset)
+
 # user's first number choice from prompt
-first_number_choice = get_number_choice(first_visible_numbers)
+# get_number_choice(): Asks the user which color they want to 
+# choose and returns the selected choice as a string
+# for an extra challenge, handle invalid input too
+first_number_choice = get_number_choice(current_numset)
 
 # Move again based on the chosen number
-second_visible_numbers = get_visible_numbers(first_number_choice)
+current_numset = get_visible_numbers(first_number_choice, current_numset)
 
 # Third choice: final number
-display_numbers(second_visible_numbers)
-final_number_choice = get_number_choice(second_visible_numbers)
+display_numbers(current_numset)
+final_number_choice = get_number_choice(current_numset)
 
 # Show the fortune
+# get_fortune(): given the number returns the fortune
 fortune = get_fortune(final_number_choice)
 display_fortune(fortune)

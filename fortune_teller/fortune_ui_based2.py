@@ -3,7 +3,8 @@ Fortune Teller UI Example
 Uses pygame + pygame_gui
 
 Purpose:
-Demonstrate functions, buttons, entry boxes, labels, and images.
+Demonstrate functions, text entry boxes, labels, buttons,
+images, and how to turn a text-based program into a UI program.
 """
 
 # -----------------------------
@@ -43,8 +44,7 @@ FORTUNES = {
 # -----------------------------
 # GLOBAL VARIABLES
 # -----------------------------
-color_length = 0
-current_numbers = []
+current_numbers = NUMBERS_SET1
 num_selected_once = False
 image = None
 
@@ -53,7 +53,16 @@ image = None
 # FUNCTIONS
 # -----------------------------
 
-# Purpose: load the fortune teller image
+# Purpose: display a welcome message in the UI
+def display_intro():
+    title_label.set_text("Magic Fortune Teller")
+    instruction_label.set_text(
+        "Choose a color, then a number, then one more number to reveal your fortune!"
+    )
+    status_label.set_text("Type a color to begin.")
+
+
+# Purpose: load an image file
 def load_image(filename):
     try:
         image_path = os.path.join(BASE_DIR, filename)
@@ -62,16 +71,19 @@ def load_image(filename):
         return None
 
 
-# Purpose: determine which numbers to show color length
-def get_number_choices(length):
-    if length % 2 == 0:
+# Purpose: choose the starting number set from the color
+def get_number_choices_from_color(color):
+    if len(color) % 2 == 0:
         return NUMBERS_SET2
     else:
         return NUMBERS_SET1
-    
-# Purpose: determine which numbers to show from number choice
+
+
+# Purpose: choose the next number set from the first number choice
 def get_number_choices_from_number(number):
-    if number % 2 == 1: # switch only if it odd, else remains the same
+    global current_numbers
+
+    if number % 2 == 1:
         if current_numbers == NUMBERS_SET1:
             return NUMBERS_SET2
         else:
@@ -80,59 +92,46 @@ def get_number_choices_from_number(number):
         return current_numbers
 
 
-# Purpose: handle color button press
+# Purpose: handle color submission
 def submit_color():
+    global current_numbers, num_selected_once
 
-    global color_length
-    global current_numbers
+    color = color_entry.get_text().lower().strip()
 
-    color = color_entry.get_text().lower()
+    num_selected_once = False
+    current_numbers = get_number_choices_from_color(color)
 
-    if color in COLORS:
-
-        color_length = len(color)
-        current_numbers = get_number_choices(color_length)
-
-        color_label.set_text(color.upper())
-        number_label.set_text("Pick a number from " + ", ".join(current_numbers))
-
-        status_label.set_text("Color accepted.")
-
-    else:
-
-        color_label.set_text("Invalid color")
-        status_label.set_text("Try red, blue, yellow, or green.")
+    color_label.set_text("You chose: " + color.upper())
+    number_label.set_text("Pick a number from: " + ", ".join(current_numbers))
+    fortune_label.set_text("Your fortune will appear here")
+    number_entry.set_text("")
+    status_label.set_text("Now choose your first number.")
 
 
-# Purpose: handle number button press
+# Purpose: handle number submission
 def submit_number():
     global current_numbers, num_selected_once
 
-    number = number_entry.get_text()
+    number = number_entry.get_text().strip()
 
-    if number in current_numbers:
-
+    if number in FORTUNES:
         if num_selected_once:
             fortune = FORTUNES[number]
-            fortune_label.set_text(f"Your fortune: {fortune}")
+            fortune_label.set_text("Your fortune: " + fortune)
+            status_label.set_text("Fortune revealed!")
         else:
             current_numbers = get_number_choices_from_number(int(number))
-            number_label.set_text("Pick ANOTHER number from " + ", ".join(current_numbers))
+            number_label.set_text("Pick ANOTHER number from: " + ", ".join(current_numbers))
             number_entry.set_text("")
-            status_label.set_text("Number accepted.")
             num_selected_once = True
-    else:
-
-        fortune_label.set_text("Pick one of the listed numbers.")
-        status_label.set_text("Invalid number")
+            status_label.set_text("Choose one more number.")
 
 
 # Purpose: draw the image
 def draw_image(surface):
-
     if image:
         scaled = pygame.transform.scale(image, (320, 320))
-        surface.blit(scaled, (180, 500))
+        surface.blit(scaled, (190, 500))
 
 
 # -----------------------------
@@ -144,79 +143,84 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Fortune Teller")
 
 clock = pygame.time.Clock()
-
 manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 
 image = load_image("fortune_teller.png")
-numberset1_image = load_image("set1.png")
-numberset2_image = load_image("set1.png")
-
 
 # Title
 title_label = pygame_gui.elements.UILabel(
-    pygame.Rect(140, 20, 420, 30),
-    "Pick a color and I will tell your fortune",
+    pygame.Rect(180, 20, 340, 30),
+    "",
     manager
 )
 
-# Color instructions
+# Instructions
 instruction_label = pygame_gui.elements.UILabel(
-    pygame.Rect(120, 60, 460, 30),
-    "Pick a color: red, blue, yellow, or green",
+    pygame.Rect(70, 60, 560, 30),
+    "",
+    manager
+)
+
+# Color input directions
+color_prompt_label = pygame_gui.elements.UILabel(
+    pygame.Rect(150, 100, 400, 30),
+    "Type a color: red, blue, yellow, or green",
     manager
 )
 
 # Color input
 color_entry = pygame_gui.elements.UITextEntryLine(
-    pygame.Rect(265, 100, 170, 35),
+    pygame.Rect(265, 140, 170, 35),
     manager
 )
 
 color_button = pygame_gui.elements.UIButton(
-    pygame.Rect(285, 150, 130, 40),
-    "Submit color",
+    pygame.Rect(280, 190, 140, 40),
+    "Submit Color",
     manager
 )
 
-# Spelling label (just shows the color)
+# Chosen color display
 color_label = pygame_gui.elements.UILabel(
-    pygame.Rect(250, 210, 200, 30),
+    pygame.Rect(180, 250, 340, 30),
     "...",
     manager
 )
 
 # Number prompt
 number_label = pygame_gui.elements.UILabel(
-    pygame.Rect(180, 250, 340, 30),
+    pygame.Rect(120, 290, 460, 30),
     "Pick a number from ...",
     manager
 )
 
 # Number input
 number_entry = pygame_gui.elements.UITextEntryLine(
-    pygame.Rect(265, 290, 170, 35),
+    pygame.Rect(265, 330, 170, 35),
     manager
 )
 
 number_button = pygame_gui.elements.UIButton(
-    pygame.Rect(280, 340, 140, 40),
-    "Submit number",
+    pygame.Rect(280, 380, 140, 40),
+    "Submit Number",
     manager
 )
 
 # Fortune label
 fortune_label = pygame_gui.elements.UILabel(
-    pygame.Rect(150, 420, 400, 40),
+    pygame.Rect(70, 440, 560, 40),
     "Your fortune will appear here",
     manager
 )
 
 # Status label
 status_label = pygame_gui.elements.UILabel(
-    pygame.Rect(150, 850, 400, 30),
+    pygame.Rect(100, 850, 500, 30),
     "",
     manager
 )
+
+display_intro()
 
 
 # -----------------------------
@@ -225,16 +229,13 @@ status_label = pygame_gui.elements.UILabel(
 running = True
 
 while running:
-
     time_delta = clock.tick(FPS) / 1000
 
     for event in pygame.event.get():
-
         if event.type == pygame.QUIT:
             running = False
 
         if event.type == pygame_gui.UI_BUTTON_PRESSED:
-
             if event.ui_element == color_button:
                 submit_color()
 
@@ -246,13 +247,10 @@ while running:
     manager.update(time_delta)
 
     screen.fill((84, 72, 72))
-
     manager.draw_ui(screen)
-
     draw_image(screen)
 
     pygame.display.update()
-
 
 pygame.quit()
 sys.exit()
