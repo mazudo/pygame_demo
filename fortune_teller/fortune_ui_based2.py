@@ -20,7 +20,7 @@ import os
 # CONSTANTS
 # -----------------------------
 WIDTH = 700
-HEIGHT = 900
+HEIGHT = 800
 FPS = 60
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,6 +40,16 @@ FORTUNES = {
     "8": "Today will be interesting."
 }
 
+FORTUNES2 = [
+    "You will have a great day.",
+    "A new friend is coming.",
+    "You will learn something exciting.",
+    "A surprise is in your future.",
+    "You will succeed soon.",
+    "Good luck is coming your way.",
+    "You will make someone smile.",
+    "Today will be interesting."
+]
 
 # -----------------------------
 # GLOBAL VARIABLES
@@ -112,15 +122,15 @@ def submit_color():
 def submit_number():
     global current_numbers, num_selected_once
 
-    number = number_entry.get_text().strip()
+    number = int(number_entry.get_text().strip())
 
-    if number in FORTUNES:
+    if number < len(FORTUNES2):
         if num_selected_once:
-            fortune = FORTUNES[number]
+            fortune = FORTUNES2[number]
             fortune_label.set_text("Your fortune: " + fortune)
             status_label.set_text("Fortune revealed!")
         else:
-            current_numbers = get_number_choices_from_number(int(number))
+            current_numbers = get_number_choices_from_number(number)
             number_label.set_text("Pick ANOTHER number from: " + ", ".join(current_numbers))
             number_entry.set_text("")
             num_selected_once = True
@@ -130,8 +140,8 @@ def submit_number():
 # Purpose: draw the image
 def draw_image(surface):
     if image:
-        scaled = pygame.transform.scale(image, (320, 320))
-        surface.blit(scaled, (190, 500))
+        scaled = pygame.transform.scale(image, (280, 280))
+        surface.blit(scaled, (210, 480))
 
 
 # -----------------------------
@@ -150,14 +160,14 @@ image = load_image("fortune_teller.png")
 # Title
 title_label = pygame_gui.elements.UILabel(
     pygame.Rect(180, 20, 340, 30),
-    "",
+    "Magic Fortune Teller",
     manager
 )
 
 # Instructions
 instruction_label = pygame_gui.elements.UILabel(
     pygame.Rect(70, 60, 560, 30),
-    "",
+    "Choose a color, then a number, then one more number to reveal your fortune!",
     manager
 )
 
@@ -215,12 +225,12 @@ fortune_label = pygame_gui.elements.UILabel(
 
 # Status label
 status_label = pygame_gui.elements.UILabel(
-    pygame.Rect(100, 850, 500, 30),
-    "",
+    pygame.Rect(100, 770, 500, 30),
+    "Type a color to begin.",
     manager
 )
 
-display_intro()
+# display_intro()
 
 
 # -----------------------------
