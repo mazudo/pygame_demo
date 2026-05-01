@@ -7,6 +7,62 @@ Demonstrate functions, text entry boxes, labels, buttons,
 images, and how to turn a text-based program into a UI program.
 """
 
+"""
+Image change TODO:
+
+The Core Idea: An Image Lookup Table
+Instead of writing a bunch of if/else chains scattered through the code, 
+put all the image decisions in one place at the top — a list of lists that maps game states to filenames. 
+Students can read it like a table:
+
+python# -----------------------------
+# IMAGES (one place to change what shows when)
+# -----------------------------
+images = {
+    "intro":        "img_intro.png",
+    "color_chosen": "img_color.png",
+    "set1_showing": "img_set1.png",
+    "set2_showing": "img_set2.png",
+    "fortune":      "img_fortune.png"
+}
+Then add one new game state variable:
+python# GAME STATE
+current_set = set1
+num_selected_once = False
+current_image = images["intro"]      # ← new
+
+One New Function
+pythondef update_image(state_name):
+    global current_image
+    current_image = load_image(images[state_name])
+draw_image already uses current_image — so no changes needed there at all.
+
+Then each submit function just calls update_image in the right spot
+pythondef submit_color():
+    ...
+    current_set = get_starting_set(color)
+    update_image("color_chosen")       # ← one line added
+    ...
+
+def submit_number():
+    ...
+    if num_selected_once:
+        update_image("fortune")        # ← one line added
+    else:
+        current_set = flip_numbers(current_set)
+        if current_set == set1:
+            update_image("set1_showing")   # ← one line added
+        else:
+            update_image("set2_showing")   # ← one line added
+        ...
+
+Why this works well for a student
+The images dictionary at the top acts like a cast list — students can see every image 
+in the game in one glance and swap filenames without touching any logic. The update_image() 
+call reads almost like plain English. And draw_image() stays completely untouched.
+
+"""
+
 # -----------------------------
 # IMPORTS
 # -----------------------------
